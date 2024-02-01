@@ -20,7 +20,7 @@ CONFIG = {
 }
 
 model = ShapeCNN(num_classes=MODE_CONFIG['num_classes']).to(device)
-model.load_state_dict(torch.load('model.pth'))
+model.load_state_dict(torch.load('model.pth', map_location=torch.device('cpu')))
 
 pygame.init()
 
@@ -53,10 +53,10 @@ while True:
 
     surface_data = pygame.surfarray.array3d(screen)
     pil_image = Image.fromarray(surface_data.swapaxes(0, 1)).convert("RGB")
-    
+
     result, confidence = model.predict(pil_image, transform=transform, device=device)
 
-    text_surface = font.render(f"{["circle", "square", "triangle"][result]}, {confidence*100:.1f}% confidence", True, CONFIG['COLORS']['BLACK'] )
+    text_surface = font.render(f'{["circle", "square", "triangle"][result]}, {confidence*100:.1f}% confidence', True, CONFIG['COLORS']['BLACK'] )
     screen.blit(text_surface, (10, 10))
 
     pygame.display.flip()
